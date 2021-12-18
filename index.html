@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Deploy a Remix Contract</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1>Ethereum Secret Messenger</h1>
+        <hr>
+
+        <label for="message">This site writes a secret message to the Ethereum
+            blockchain!</label>
+        <input id="userInput" type="text">
+
+        <button id="setMessageButton">Set secret message</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+        
+        console.log("MYMESSAGE:", MyMessage);
+        // Connect a the web3 provider
+            if (typeof web3 !== 'undefined') {
+                web3.currentProvider.enable();
+                console.log("web3:", web3.currentProvider)
+                web3 = new Web3(web3.currentProvider);
+            } else {
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            }
+            console.log('web3.eth', web3.eth);
+            // console.log('web3.contracts', web3.contracts
+            // Set a default account
+            web3.eth.defaultAccount = web3.eth.accounts[0];
+
+            // Get the contract address
+            var MyMessage = new web3.eth.Contract([
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "name": "setMessage",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getMessage",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ], "0x939a2A4157edf2721A4412d30C55B63fA414A6Ee");
+
+                     console.log(MyMessage);
+
+            $("#setMessageButton").click(async function () {
+                // RemixContract.methods.setMessage($("#userInput").val()).call().then(console.log)
+                const message = $("#userInput").val();
+                const messageResponse = await MyMessage.methods.setMessage(message).send({ from: '0xdC381d381f9C5949B26B6e1ad415Bec6cd608C69', value: 1, isPayable: true  });
+                const getMessageResponse = await MyMessage.methods.getMessage().call();
+                console.log("Message Response:", messageResponse);
+                console.log("Get Message Response:", getMessageResponse);
+                // console.log($("#userInput").val())
+            });
+
+    </script>
+</body>
+
+</html>
